@@ -62,6 +62,23 @@ function contour(c, s, p, m, e, pre_preimage)
 
     # Find the subset on which Evans function is initially evaluated
     lbasis, lproj = c.basisL(c.Lproj, c.L, preimage, s, p, c.LA, 1, c.epsl)
+    rbasis, rproj = c.basisR(c.Rproj, c.R, preimage, s, p, c.RA, -1, c.epsr)
+
+    index = 1:(c.ksteps+1):length(preimage)
+    lbasis2 = lbasis[:,:,index]
+    rbasis2 = rbasis[:,:,index]
+    preimage2 = preimage[index]
+
+    out = zeros(length(preimage2))
+
+    # Makes sure the contour can be successfully computed close enough to the origin
+    # to satisfy tolerance before computing everything
+
+    if c.check == "on"
+        out[1] = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,1], s, p, m, e)
+        near_origin = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,end], s, p, m, e)
+
+    end
 
     # TODO:: Modify return statement when function is complete
     return 0, 0

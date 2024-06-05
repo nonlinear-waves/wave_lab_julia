@@ -45,6 +45,7 @@ struct C
     Rproj
     L
     R
+    check
 end
 
 

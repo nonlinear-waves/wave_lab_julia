@@ -1,4 +1,4 @@
-
+using LinearAlgebra
 
 function evans(yl, yr, lambda, s, p, m, e)
 
@@ -10,10 +10,20 @@ function evans(yl, yr, lambda, s, p, m, e)
     # explained in the STABLAB documentation.
 
 
-    # TODO:: Original MATLAB code uses str2func here. This might cause problems in the future
-    fun = e_evans
+    fun = getfield(Main, Symbol(e.evans))
     
     return fun(yl, yr, lambda, s, p, m, e)
+
+end
+
+
+function reg_reg_polar(WL, WR, lambda, s, p, m, e)
+
+    #Solve for the basis on left
+
+    OmegaL0 = orth
+
+
 
 end
 

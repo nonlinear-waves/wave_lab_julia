@@ -79,7 +79,6 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_evans = Evan_type
     end
 
-    println(e_evans)
     if cmp(e_evans, "reg_adj_polar") == 0
         c_LA = func
         e_LA = c_LA
@@ -93,7 +92,6 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NR = 0
 
     elseif cmp(e_evans, "reg_reg_polar") == 0
-        println(func)
         c_LA = func
         e_LA = c_LA
         c_RA = func
@@ -153,6 +151,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
 
     end
 
+    c_check = "on"
     c_stats = "off"
     c_refine = "off"
     c_tol = 0.2
@@ -184,7 +183,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
 
     #Create structures
     m = M(m_n, m_damping, m_method, m_options, m_ode_fun)
-    c = C(c_LA, c_RA, c_stats, c_refine, c_tol, c_ksteps, c_lambda_steps, c_basisL, c_basisR, c_evans, c_epsl, c_epsr, c_Lproj, c_Rproj, c_L, c_R)
+    c = C(c_LA, c_RA, c_stats, c_refine, c_tol, c_ksteps, c_lambda_steps, c_basisL, c_basisR, c_evans, c_epsl, c_epsr, c_Lproj, c_Rproj, c_L, c_R, c_check)
     e = E(e_evans, e_LA, e_kl, e_kr, e_NL, e_NR)
 
 
