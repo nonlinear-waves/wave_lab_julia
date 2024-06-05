@@ -14,16 +14,39 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
     # computation. When these two inputs are not specified, they are chosen
     # automtically.
 
-    iterations = size(preimage, 2)
+    #TODO:: There may be problems with this code if projection is not actually one dimensional. Verify if this will ever be the case
+    iterations = size(preimage, 1)
 
-    println(typeof(A))
     p_old, Q1 = projection(A(x, preimage[1], s, p), posneg, eps)
     n,k = size(Q1)
-    out = zeros(n, k, iterations)
+    out = zeros(ComplexF64, n, k, iterations)
 
-    projects = zeros(size(p_old, 1), size(p_old, 2), iterations)
+    projects = zeros(ComplexF64, size(p_old, 1), size(p_old, 2), iterations)
+
+    if isnothing(Q)
+        out[:,:,1] = Q1
+        projects[:,:,1] = p_old
+
+    else
+        out[:,:,1] = Q
+        projects[:,:,1] = p_old_in
+        p_old = p_old_in
+
+    end
+
+    for j=2:iterations
+        proj, _ = projection(A(x, preimage[j], s, p), posneg, eps)
+        out[:,:,j] = proj * (I + 0.5 * p_old * (I - proj)) * out[:, :, j-1]
+        projects[:,:,j] = proj
+        p_old = proj
+
+    end
+
+    # println(out)
+    # println(projects)
+
+    return out, projects
 
 
-    println("Hello World")
 end
 
