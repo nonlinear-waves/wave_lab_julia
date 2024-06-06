@@ -16,10 +16,13 @@ function manifold_polar(x, y, lambda, A, s, p, m, k, mu)
 
     ode_params = ODE_params(lambda, A, s, p, m.n, k, mu)
 
-    
-    prob = ODEProblem(m.method, [reshape(y, m.n*k, 1); 0], (x[1], x[2]), ode_params)
-    solve(prob, m.ode_fun(); m.options...)
 
+    prob = ODEProblem(m.method, [reshape(y, m.n*k, 1); 0], (x[1], x[2]), ode_params)
+
+    #TODO:: It doesn't look like drury works with automatic differentiation. The issue has to do with Complex types? Look into modifying drury so it is compatible
+    sol = solve(prob, m.ode_fun(autodiff=false); m.options...)
+
+    println(size(sol.u))
 
     return nothing
 end
