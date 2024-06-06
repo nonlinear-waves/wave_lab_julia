@@ -57,4 +57,16 @@ struct E
     kr
     NL
     NR
+    Li
+    Ri
+end
+
+struct ODE_params
+    lambda
+    A
+    s
+    p
+    n
+    k
+    mu
 end

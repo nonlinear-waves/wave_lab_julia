@@ -69,13 +69,14 @@ function contour(c, s, p, m, e, pre_preimage)
     rbasis2 = rbasis[:,:,index]
     preimage2 = preimage[index]
 
-    out = zeros(length(preimage2))
+    out = zeros(ComplexF64, length(preimage2))
 
     # Makes sure the contour can be successfully computed close enough to the origin
     # to satisfy tolerance before computing everything
 
     if c.check == "on"
-        out[1] = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,1], s, p, m, e)
+        #TODO:: There may be an error in the original MATLAB code on this line. Has preimage2[:,1] which doesn't work in Julia
+        out[1] = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[1], s, p, m, e)
         near_origin = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,end], s, p, m, e)
 
     end

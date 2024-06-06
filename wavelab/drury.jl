@@ -1,4 +1,4 @@
-function drury(t, y, lambda, A, s, p, n, k, mu)
+function drury(y, p, t)
     # Returns the ODE output for the polar method using the method of Drury
     #
     # Input "t" and "y" are provided by the ode soler, "A" is a function handle to the
@@ -9,15 +9,12 @@ function drury(t, y, lambda, A, s, p, n, k, mu)
     # W = Omega*alpha, gamma = det(alpha), rho = log(gamma)
 
     # Reshape the (k*n + 1) vector to be the n x k matrix Omega
-    Omega = reshape(y[1:k*n,1], n, k)
+    Omega = reshape(y[1:p.k*p.n,1], p.n, p.k)
 
     # Evaluate A(x, lamda)
-    A_temp = A(t, lambda, s, p)
+    A_temp = A(t, p.lambda, p.s, p.p)
 
     # Compute Omega' and rho'
-
-
-    #TODO:: Modify return statement once function is complete
-    return 0
+    return [reshape((I - Omega * Omega') * A_temp * Omega, p.n * p.k, 1); tr(Omega' * A_temp * Omega) - p.mu]
 
 end

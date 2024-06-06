@@ -169,8 +169,8 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
     m_damping = 0
     m_method = drury
 
-    # TODO:: Not sure what to do with the options parameters yet
-    m_options = 0
+    # TODO:: I am assuming that julia solvers use a default refine value of 1. Figure out if this is true or how to provide a similar value
+    m_options = Dict(:reltol => 1e-6, :abstol => 1e-8)
 
     # TODO:: Decide which Julia solver would be best here, or if we should include functionality for the user to pick
     m_ode_fun = QNDF
@@ -184,7 +184,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
     #Create structures
     m = M(m_n, m_damping, m_method, m_options, m_ode_fun)
     c = C(c_LA, c_RA, c_stats, c_refine, c_tol, c_ksteps, c_lambda_steps, c_basisL, c_basisR, c_evans, c_epsl, c_epsr, c_Lproj, c_Rproj, c_L, c_R, c_check)
-    e = E(e_evans, e_LA, e_kl, e_kr, e_NL, e_NR)
+    e = E(e_evans, e_LA, e_kl, e_kr, e_NL, e_NR, e_Li, e_Ri)
 
 
     # TODO:: Modify return function when function is finished
