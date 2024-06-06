@@ -74,12 +74,64 @@ function contour(c, s, p, m, e, pre_preimage)
     # Makes sure the contour can be successfully computed close enough to the origin
     # to satisfy tolerance before computing everything
 
+    #TODO:: Verify that this checking code actually works
     if c.check == "on"
-        #TODO:: There may be an error in the original MATLAB code on this line. Has preimage2[:,1] which doesn't work in Julia
-        out[1] = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[1], s, p, m, e)
-        near_origin = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,end], s, p, m, e)
+        try
+            #TODO:: There may be an error in the original MATLAB code on this line. Has preimage2[:,1] which doesn't work in Julia
+            out[1] = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[1], s, p, m, e)
+            near_origin = c.evans(lbasis2[:,:,end], rbasis2[:,:,end], preimage2[:,end], s, p, m, e)
+            out[end] = near_origin / out[1]
+
+            if abs(conj(out[end]) - out[end]) / abs(out[end]) > c.tol
+                println(out[1])
+                println(out[end])
+                println(abs(conj(out[end]) - out[end]) / abs(out[end]))
+                error("The Evans function does not satisfy tolerance at the endpoint of the contour")
+            end
+        catch e
+            error("The Evans function failed to compute at the end point")
+        end
+    end
+
+
+    # Compute the Evans function on the initial contour
+    if cstats == 1
+        # TODO:: MATLAB code uses a waitbar here. Decide if we want to attempt something similar here
+        # TODO:: MATLAB code begins timing things here. Decide how to best implement a timing mechanism in Julia
+
+        for j = 1:length(index)
+            out[j] = c.evans(lbasis2[:, :, j], rbasis[:, :, j], preimage2[:, j], s, p, m, e)
+        end
+
+    else
+        if c.stats == "print"
+            println("Computing the Evans function on the first set of points")
+        end
+        if c.debug = "on"
+            for j = 1:length(index)
+                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, 2], preimage2[j], s, p, m, e)
+            end
+        else
+            # TODO:: MATLAB code uses a parallelized loop here. Looks like there are ways to do this Julia but probably want to research more about how it works and how stable the package is across platforms https://discourse.julialang.org/t/trying-to-write-a-parallel-for-loop-in-julia/40862/3
+            for j = 1:length(index)
+                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, 2], preimage2[j], s, p, m, e)
+            end
+        end
 
     end
+
+    # Check if relative error tolerance has been specified
+    if c.refine != "on"
+        error("No relative error specified")
+        return nothing
+    end
+
+    # Refine the mesh on which the Evans function is computed until requested tolerance is achieved
+    # using the Kato steps as needed
+
+
+
+
 
     # TODO:: Modify return statement when function is complete
     return 0, 0

@@ -46,6 +46,7 @@ struct C
     L
     R
     check
+    debug
 end
 
 
