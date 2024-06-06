@@ -54,6 +54,7 @@ end
 struct E
     evans
     LA
+    RA
     kl
     kr
     NL

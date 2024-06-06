@@ -25,17 +25,23 @@ function reg_reg_polar(WL, WR, lambda, s, p, m, e)
 
     #TODO::Might want to check that this does the same thing as MATLAB code. The code uses an "econ" parameter
     OmegaL0 = svd(WL).U
-    println(lambda)
     alphaL = OmegaL0' * WL
     muL = tr(OmegaL0' * e.LA(e.Li[1], lambda, s, p) * OmegaL0)
     omegal, gammal = manifold_polar(e.Li, OmegaL0, lambda, e.LA, s, p, m, e.kl, muL)
 
-    # Use projection2 for constructing orthonormal basis
+    # Solve for the basis on the right
 
+    OmegaR0 = svd(WR).U
+    alphaR = OmegaR0' * WR
+    muR = tr(OmegaR0' * e.RA(e.Ri[1], lambda, s, p) * OmegaR0)
+    omegar, gammar = manifold_polar(e.Ri, OmegaR0, lambda, e.RA, s, p, m, e.kr, muR)
+
+    #Evaluate the determinant
+
+    out = (det(alphaL) * gammal) * (det(alphaR) * gammar) * det([omegal omegar])
+
+    return out
     
-
-
-    return nothing
 end
 
 

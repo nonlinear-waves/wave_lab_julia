@@ -122,14 +122,13 @@ function contour(c, s, p, m, e, pre_preimage)
 
     # Check if relative error tolerance has been specified
     if c.refine != "on"
-        error("No relative error specified")
-        return nothing
+        return out, preimage2
     end
 
     # Refine the mesh on which the Evans function is computed until requested tolerance is achieved
     # using the Kato steps as needed
 
-
+    # TODO:: Finish the rest of the function
 
 
 

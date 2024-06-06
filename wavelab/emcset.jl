@@ -185,7 +185,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
     #Create structures
     m = M(m_n, m_damping, m_method, m_options, m_ode_fun)
     c = C(c_LA, c_RA, c_stats, c_refine, c_tol, c_ksteps, c_lambda_steps, c_basisL, c_basisR, c_evans, c_epsl, c_epsr, c_Lproj, c_Rproj, c_L, c_R, c_check, c_debug)
-    e = E(e_evans, e_LA, e_kl, e_kr, e_NL, e_NR, e_Li, e_Ri)
+    e = E(e_evans, e_LA, e_RA, e_kl, e_kr, e_NL, e_NR, e_Li, e_Ri)
 
 
     # TODO:: Modify return function when function is finished
