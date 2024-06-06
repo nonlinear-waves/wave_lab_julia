@@ -15,6 +15,6 @@ function drury(y, p, t)
     A_temp = A(t, p.lambda, p.s, p.p)
 
     # Compute Omega' and rho'
-    return [reshape((I - Omega * Omega') * A_temp * Omega, p.n * p.k, 1); tr(Omega' * A_temp * Omega) - p.mu]
+    return [reshape((I - Omega * Omega') * A_temp * Omega, p.n * p.k, 1);  tr(Omega' * A_temp * Omega) - p.mu]
 
 end

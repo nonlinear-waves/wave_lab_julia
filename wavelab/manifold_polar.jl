@@ -22,7 +22,10 @@ function manifold_polar(x, y, lambda, A, s, p, m, k, mu)
     #TODO:: It doesn't look like drury works with automatic differentiation. The issue has to do with Complex types? Look into modifying drury so it is compatible
     sol = solve(prob, m.ode_fun(autodiff=false); m.options...)
 
-    println(size(sol.u))
+    #TODO:: This indexing is a little funky and might cause problems for higher dimensional problems
+    Omega = reshape(sol[1:m.n * k, :, end], m.n, k);
 
-    return nothing
+    gamma = exp(sol[m.n*k + 1, :, end][1])
+
+    return Omega, gamma
 end

@@ -107,7 +107,7 @@ function contour(c, s, p, m, e, pre_preimage)
         if c.stats == "print"
             println("Computing the Evans function on the first set of points")
         end
-        if c.debug = "on"
+        if c.debug == "on"
             for j = 1:length(index)
                 out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, 2], preimage2[j], s, p, m, e)
             end
