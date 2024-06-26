@@ -17,9 +17,19 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
     #TODO:: There may be problems with this code if projection is not actually one dimensional. Verify if this will ever be the case
     iterations = size(preimage, 1)
 
+
+    # println(projection)
+    # println(x)
+    # println(s)
+    # println(p)
+    # println(A)
+    # println(posneg)
+    # println(eps)
+
     p_old, Q1 = projection(A(x, preimage[1], s, p), posneg, eps)
     n,k = size(Q1)
     out = zeros(ComplexF64, n, k, iterations)
+    Q1 = -Q1
 
     projects = zeros(ComplexF64, size(p_old, 1), size(p_old, 2), iterations)
 
@@ -36,6 +46,17 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
 
     for j=2:iterations
         proj, _ = projection(A(x, preimage[j], s, p), posneg, eps)
+
+        # a = (p.ul - p.ur) / 2
+        # mu_plus = (-a - sqrt(a^2 + 4 * preimage[j])) / 2
+        # mu_minus = (a + sqrt(a^2 + 4 * preimage[j])) / 2
+
+        # println("mu_plus:", (-a - sqrt(a^2 + 4 * 1)) / 2)
+        # println("mu_minus:", (a + sqrt(a^2 + 4 * 1)) / 2)
+
+        # proj = 1 / (mu_minus - mu_plus) * [mu_minus 1
+        #                                    mu_minus * mu_plus   -mu_plus]
+        # println(proj)
         out[:,:,j] = proj * (I + 0.5 * p_old * (I - proj)) * out[:, :, j-1]
         projects[:,:,j] = proj
         p_old = proj
@@ -43,7 +64,7 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
     end
 
     # println(out)
-    # println(projects)
+    println(projects)
 
     return out, projects
 

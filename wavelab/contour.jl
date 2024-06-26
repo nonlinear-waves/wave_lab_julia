@@ -63,6 +63,8 @@ function contour(c, s, p, m, e, pre_preimage)
     # Find the subset on which Evans function is initially evaluated
     lbasis, lproj = c.basisL(c.Lproj, c.L, preimage, s, p, c.LA, 1, c.epsl)
     rbasis, rproj = c.basisR(c.Rproj, c.R, preimage, s, p, c.RA, -1, c.epsr)
+    #println("Lbasis: ", lbasis)
+    #println("rbasis: ", rbasis)
 
     index = 1:(c.ksteps+1):length(preimage)
     lbasis2 = lbasis[:,:,index]
