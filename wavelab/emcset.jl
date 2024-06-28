@@ -164,6 +164,8 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
 
     c_epsl = 0
     c_epsr = 0
+
+    # TODO:: Change back to projection2
     c_Lproj = projection2
     c_Rproj = projection2
 

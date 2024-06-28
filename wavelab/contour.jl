@@ -111,12 +111,12 @@ function contour(c, s, p, m, e, pre_preimage)
         end
         if c.debug == "on"
             for j = 1:length(index)
-                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, 2], preimage2[j], s, p, m, e)
+                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, j], preimage2[j], s, p, m, e)
             end
         else
             # TODO:: MATLAB code uses a parallelized loop here. Looks like there are ways to do this Julia but probably want to research more about how it works and how stable the package is across platforms https://discourse.julialang.org/t/trying-to-write-a-parallel-for-loop-in-julia/40862/3
             for j = 1:length(index)
-                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, 2], preimage2[j], s, p, m, e)
+                out[j] = c.evans(lbasis2[:, :, j], rbasis2[:, :, j], preimage2[j], s, p, m, e)
             end
         end
 

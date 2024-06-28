@@ -29,7 +29,6 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
     p_old, Q1 = projection(A(x, preimage[1], s, p), posneg, eps)
     n,k = size(Q1)
     out = zeros(ComplexF64, n, k, iterations)
-    Q1 = -Q1
 
     projects = zeros(ComplexF64, size(p_old, 1), size(p_old, 2), iterations)
 
@@ -64,7 +63,6 @@ function analytic_basis(projection, x, preimage, s, p, A, posneg, eps, Q = nothi
     end
 
     # println(out)
-    println(projects)
 
     return out, projects
 
