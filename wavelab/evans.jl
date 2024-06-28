@@ -1,6 +1,8 @@
 using LinearAlgebra
 
 include("manifold_polar.jl")
+include("manifold_compound.jl")
+include("wedgie.jl")
 
 function evans(yl, yr, lambda, s, p, m, e)
 
@@ -19,26 +21,25 @@ function evans(yl, yr, lambda, s, p, m, e)
 end
 
 
+function reg_adj_compound(yl, yr, lambda, s, p, m, e)
+    Lmani = manifold_compound(e.Li, wedgie(yl), lambda, s, p, m, e.LA, e.kl, 1)
+
+    Rmani = manifold_compound(e.Ri, wedgie(yr), lambda, s, p, m, e.RA, e.kr, -1)
+
+    return 0
+
+end
+
+
 function reg_reg_polar(WL, WR, lambda, s, p, m, e)
 
     #Solve for the basis on left
 
-    #TODO::Might want to check that this does the same thing as MATLAB code. The code uses an "econ" parameter
+    #TODO:: Might want to check that this does the same thing as MATLAB code. The code uses an "econ" parameter
     OmegaL0 = svd(WL).U
     alphaL = OmegaL0' * WL
     muL = tr(OmegaL0' * e.LA(e.Li[1], lambda, s, p) * OmegaL0)
     omegal, gammal = manifold_polar(e.Li, OmegaL0, lambda, e.LA, s, p, m, e.kl, muL)
-    # println(e.Li)
-    # println(OmegaL0)
-    # println(lambda)
-    # println(e.LA)
-    # println(s)
-    # println(p)
-    # println(m)
-    # println(e.kl)
-    # println(muL)
-    # println("OmegaL", omegal)
-    # println("gammaL", gammal)
 
     # Solve for the basis on the right
 
@@ -46,17 +47,6 @@ function reg_reg_polar(WL, WR, lambda, s, p, m, e)
     alphaR = OmegaR0' * WR
     muR = tr(OmegaR0' * e.RA(e.Ri[1], lambda, s, p) * OmegaR0)
     omegar, gammar = manifold_polar(e.Ri, OmegaR0, lambda, e.RA, s, p, m, e.kr, muR)
-    # println(e.Ri)
-    # println(OmegaR0)
-    # println(lambda)
-    # println(e.RA)
-    # println(s)
-    # println(p)
-    # println(m)
-    # println(e.kr)
-    # println(muR)
-    # println("omegaR", omegar)
-    # println("gammar", gammar)
 
     #Evaluate the determinant
 

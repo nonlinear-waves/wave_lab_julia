@@ -149,6 +149,9 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 60
         e_NR = 60
 
+    else
+        error("Unexpected Evans function type")
+
     end
 
     c_check = "off"
