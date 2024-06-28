@@ -20,6 +20,12 @@ function evans(yl, yr, lambda, s, p, m, e)
 
 end
 
+function adj_reg_compound(yl, yr, lambda, s, p, m, e)
+    Lmani = manifold_compound(e.Li, wedgie(yl), lambda, s, p, m, e.LA, e.kl, 1)
+    Rmani = manifold_compound(e.Ri, wedgie(yr), lambda, s, p, m, e.RA, e.kr, -1)
+
+    return dot(Lmani, Rmani)
+end
 
 function reg_adj_compound(yl, yr, lambda, s, p, m, e)
     Lmani = manifold_compound(e.Li, wedgie(yl), lambda, s, p, m, e.LA, e.kl, 1)
@@ -27,7 +33,7 @@ function reg_adj_compound(yl, yr, lambda, s, p, m, e)
     Rmani = manifold_compound(e.Ri, wedgie(yr), lambda, s, p, m, e.RA, e.kr, -1)
 
     # TODO:: I am 95% sure this is fine. But might need to find a more general dot product if Lmani and Rmani are matrices
-    return dot(Lmani, Rmani)
+    return dot(Rmani, Lmani)
 
 end
 
