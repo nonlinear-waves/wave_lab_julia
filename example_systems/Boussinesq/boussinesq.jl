@@ -27,9 +27,9 @@ function boussinseq()
     # STABLAB structures
 
     # s, e, m, c = emcset(s, "front", [2,2], "default", A)
-    s, e, m, c = emcset(s, "front", [2,2], "reg_adj_polar", A)
+    # s, e, m, c = emcset(s, "front", [2,2], "reg_adj_polar", A)
     # s, e, m, c = emcset(s, "front", [2,2], "adj_reg_polar", A)
-    # s, e, m, c = emcset(s, "front", [2,2], "reg_reg_polar", A)
+    s, e, m, c = emcset(s, "front", [2,2], "reg_reg_polar", A)
     # s, e, m, c = emcset(s, "front", [2,2], "reg_adj_compound", A, Ak)
     # s, e, m, c = emcset(s, "front", [2,2], "adj_reg_compound", A , Ak)
 
