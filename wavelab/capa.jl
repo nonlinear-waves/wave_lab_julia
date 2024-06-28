@@ -1,4 +1,4 @@
-function capa(x, y, lambda, s, p, A, n, k, MU)
+function capa(y, p, t)
     # out=capa(x,y,lambda,s,p,A,n,k,MU)
     #
     # Returns the value y'(x) of the first order system y'=(A(x,lambda)-(mu)*Identity)*y
@@ -11,8 +11,7 @@ function capa(x, y, lambda, s, p, A, n, k, MU)
     # eigenvalue corresponding to the largest or smallest eigenvalue of
     # A(\pm \infty,lambda) 
 
-
-    out = (A(x, lambda, s, p) - MU * eye(binomial(n, k))) * y
+    out = (p.A(t, p.lambda, p.s, p.p) - p.mu * I) * y
 
     return out
 end

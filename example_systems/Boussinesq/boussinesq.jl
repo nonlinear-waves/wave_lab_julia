@@ -1,3 +1,5 @@
+using Plots
+
 include("A.jl")
 include("Ak.jl")
 
@@ -19,7 +21,8 @@ function boussinseq()
     s_R = s_I
     s_L = -s_I
 
-    s = Infinity(s_I, s_R, s_L, nothing, nothing)
+
+    s = Infinity(s_I, s_R, s_L, A, Ak)
 
     # STABLAB structures
 
@@ -39,12 +42,12 @@ function boussinseq()
 
     # Compute Evans function
 
-    halfw = contour(c, s, p, m, e, preimage)
-    w = [halfw[1 : end-1]; fliplr(conj(halfw))]
+    halfw, _ = contour(c, s, p, m, e, preimage)
+    w = [halfw[1 : end-1]; reverse(conj(halfw))]
 
     wnd = winding_number(w)
+    println("Winding Number: ", wnd)
     plot(w/w[1])
-    println("Winding Number: " + wnd)
 
 end
 

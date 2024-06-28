@@ -1,6 +1,8 @@
 using LinearAlgebra
 using DifferentialEquations
 
+include("capa.jl")
+
 
 function manifold_compound(x, z, lambda, s, p, m, A, k, pmMU)
     # out = manifold_compound(x,z,lambda,s,p,m,A,k,pmMU)
@@ -24,15 +26,14 @@ function manifold_compound(x, z, lambda, s, p, m, A, k, pmMU)
 
     MU = D[mat]
 
-
-    ode_params = ODE_params(lambda, s, p, A, m.n, k, MU)
-    prob = ODEProblem(capa, x, z, ode_params)
+    ode_params = ODE_params(lambda, A, s, p, m.n, k, MU)
+    prob = ODEProblem(capa, vec(z), x, ode_params)
 
     # According to Julia documentation, DP5 is the julia equivalent od ode45. Might want to try out Tsit5.
     # TODO:: Consider providing functionality for the user to choose the solver type
     sol = solve(prob, DP5(); m.options...)
 
-    out = sol[end, :]
+    out = sol.u[end]
 
     return out
 

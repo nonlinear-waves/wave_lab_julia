@@ -1,4 +1,6 @@
 function drury(y, p, t)
+    # TODO:: Update the documentation to reflect changes for Julia
+
     # Returns the ODE output for the polar method using the method of Drury
     #
     # Input "t" and "y" are provided by the ode soler, "A" is a function handle to the
@@ -11,7 +13,7 @@ function drury(y, p, t)
     # Reshape the (k*n + 1) vector to be the n x k matrix Omega
     Omega = reshape(y[1:p.k*p.n,1], p.n, p.k)
 
-    # Evaluate A(x, lamda)
+    # Evaluate A(x, lambda)
     A_temp = A(t, p.lambda, p.s, p.p)
 
     # Compute Omega' and rho'

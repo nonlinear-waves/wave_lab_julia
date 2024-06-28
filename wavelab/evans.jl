@@ -26,7 +26,8 @@ function reg_adj_compound(yl, yr, lambda, s, p, m, e)
 
     Rmani = manifold_compound(e.Ri, wedgie(yr), lambda, s, p, m, e.RA, e.kr, -1)
 
-    return 0
+    # TODO:: I am 95% sure this is fine. But might need to find a more general dot product if Lmani and Rmani are matrices
+    return dot(Lmani, Rmani)
 
 end
 
