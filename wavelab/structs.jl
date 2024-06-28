@@ -15,6 +15,7 @@ struct Parameter
     ul
     ur
     integrated
+    S
 end
 
 # TODO:: Figure out a better name for this struct so that it makes more sense

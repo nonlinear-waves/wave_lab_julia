@@ -14,7 +14,7 @@ function burgers()
 
 
     # Parameters
-    p = Parameter(1, 0, "off")
+    p = Parameter(1, 0, "off", 0)
 
     #Numerical Infinity
     s = Infinity(12, 12, -12, nothing, nothing)
