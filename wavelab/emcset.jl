@@ -53,7 +53,6 @@ function emcset(s, shock_type, eLR, Evan_type = "default", func = nothing, compo
     
     end
 
-    # TODO:: Modify return function when function is finished
     return new_s, e, m, c
 end
 
@@ -85,7 +84,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         c_RA = Aadj
         e_RA = c_RA
         e_kl = kL
-        e_kr = n - kR
+        e_kr = m_n - kR
 
         # TODO:: Verify that this won't cause problems elsewhere (NOT in MATLAB code)
         e_NL = 0
@@ -108,7 +107,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_LA = Aadj
         c_RA = func
         e_RA = func
-        e_kl = n - kL
+        e_kl = m_n - kL
         e_kr = kR
 
         # TODO:: Verify that this won't cause problems elsewhere (NOT in MATLAB code)

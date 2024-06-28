@@ -38,6 +38,33 @@ function reg_adj_compound(yl, yr, lambda, s, p, m, e)
 end
 
 
+function reg_adj_polar(WL, WR, lambda, s, p, m, e)
+     
+    # Solve for the basis left
+
+    OmegaL0 = svd(WL).U
+    alphaL = OmegaL0' * WL
+    muL = tr(OmegaL0' * e.LA(e.Li[1], lambda, s, p) * OmegaL0)
+    omegal, gammal = manifold_polar(e.Li, OmegaL0, lambda, e.LA, s, p, m, e.kl, muL)
+
+
+    # Solve for the basis on the right
+
+    OmegaR0 = svd(WR).U
+    alphaR = OmegaR0' * WR
+    muR = tr(OmegaR0' * e.RA(e.Ri[1], lambda, s, p) * OmegaR0)
+    omegar, gammar = manifold_polar(e.Ri, OmegaR0, lambda, e.RA, s, p, m, e.kr, muR)
+
+
+    #Evaluate the determinant
+
+    out = (det(alphaL) * gammal) * conj(det(alphaR) * gammar) * det(omegar' * omegal)
+
+    return out
+
+end
+
+
 function reg_reg_polar(WL, WR, lambda, s, p, m, e)
 
     #Solve for the basis on left
