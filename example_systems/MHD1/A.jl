@@ -1,4 +1,4 @@
-include("../../wavelab/soln.jl")
+include("../../wavelab/bin_main/soln.jl")
 
 
 function A(x, lambda, s, p)

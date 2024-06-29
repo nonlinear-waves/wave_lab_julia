@@ -1,9 +1,11 @@
 using DifferentialEquations
 
-include("../../wavelab/structs.jl")
-include("../../wavelab/emcset.jl")
-include("../../wavelab/contour.jl")
-include("../../wavelab/winding_number.jl")
+include("../../wavelab/bin_main/structs.jl")
+include("../../wavelab/bin_main/emcset.jl")
+include("../../wavelab/bin_main/contour.jl")
+include("../../wavelab/bin_main/winding_number.jl")
+
+include("../../wavelab/bin_profile/profile_flux.jl")
 
 
 include("A.jl")
@@ -11,7 +13,7 @@ include("Ak.jl")
 
 
 # Parameters - typically denoted as p
-struct Parameter
+struct Parameter_MHD
     B
     gamma
     mu0
@@ -39,7 +41,7 @@ function MHD()
 
     p_a = p_vp ^ p_gamma * ((1 - p_vp) / (1 - p_vp ^ p_gamma))
 
-    p = Parameter(p_B, p_gamma, p_mu0, p_sigma, p_vp, p_mu, p_eta, p_a)
+    p = Parameter_MHD(p_B, p_gamma, p_mu0, p_sigma, p_vp, p_mu, p_eta, p_a)
 
 
     # Profile Solution
@@ -95,7 +97,9 @@ function MHD()
 
     # Process and display data 
 
-    wnd = 
+    wnd = winding_number(w)
+    println("Winding Number", wnd)
+    plot_evans(w)
 
 
 end

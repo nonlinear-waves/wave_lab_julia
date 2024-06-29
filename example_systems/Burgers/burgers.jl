@@ -1,6 +1,6 @@
 using Plots
 
-struct Parameter
+struct Parameter_Burgers
     ul
     ur
     integrated
@@ -8,11 +8,11 @@ end
 
 include("A.jl")
 
-include("../../wavelab/structs.jl")
-include("../../wavelab/emcset.jl")
-include("../../wavelab/semicirc2.jl")
-include("../../wavelab/contour.jl")
-include("../../wavelab/winding_number.jl")
+include("../../wavelab/bin_main/structs.jl")
+include("../../wavelab/bin_main/emcset.jl")
+include("../../wavelab/bin_main/semicirc2.jl")
+include("../../wavelab/bin_main/contour.jl")
+include("../../wavelab/bin_main/winding_number.jl")
 
 function burgers()
 
@@ -20,7 +20,7 @@ function burgers()
 
 
     # Parameters
-    p = Parameter(1, 0, "off")
+    p = Parameter_Burgers(1, 0, "off")
 
     #Numerical Infinity
     s = Infinity(12, 12, -12, nothing, nothing)

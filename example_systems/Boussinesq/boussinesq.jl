@@ -1,17 +1,17 @@
 using Plots
 
 
-struct Parameter
+struct Parameter_Boussinesq
     S
 end
 
 include("A.jl")
 include("Ak.jl")
 
-include("../../wavelab/structs.jl")
-include("../../wavelab/emcset.jl")
-include("../../wavelab/contour.jl")
-include("../../wavelab/winding_number.jl")
+include("../../wavelab/bin_main/structs.jl")
+include("../../wavelab/bin_main/emcset.jl")
+include("../../wavelab/bin_main/contour.jl")
+include("../../wavelab/bin_main/winding_number.jl")
 
 # Boussinesq driver
 
@@ -19,7 +19,7 @@ include("../../wavelab/winding_number.jl")
 function boussinseq()
 
     # Parameters
-    p = Parameter(0.4)
+    p = Parameter_Boussinesq(0.4)
 
     # Profile
     s_I = 8
