@@ -1,5 +1,10 @@
 using Plots
 
+
+struct Parameter
+    S
+end
+
 include("A.jl")
 include("Ak.jl")
 
@@ -14,7 +19,7 @@ include("../../wavelab/winding_number.jl")
 function boussinseq()
 
     # Parameters
-    p = Parameter(nothing, nothing, nothing, 0.4)
+    p = Parameter(0.4)
 
     # Profile
     s_I = 8

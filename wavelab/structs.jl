@@ -1,5 +1,3 @@
-
-
 # Numerical Infinity - typically denoted as s
 
 struct Infinity
@@ -10,13 +8,6 @@ struct Infinity
     Ak
 end
 
-# Parameters - typically denoted as p
-struct Parameter
-    ul
-    ur
-    integrated
-    S
-end
 
 # TODO:: Figure out a better name for this struct so that it makes more sense
 struct M

@@ -1,5 +1,11 @@
 using Plots
 
+struct Parameter
+    ul
+    ur
+    integrated
+end
+
 include("A.jl")
 
 include("../../wavelab/structs.jl")
@@ -14,7 +20,7 @@ function burgers()
 
 
     # Parameters
-    p = Parameter(1, 0, "off", nothing)
+    p = Parameter(1, 0, "off")
 
     #Numerical Infinity
     s = Infinity(12, 12, -12, nothing, nothing)
