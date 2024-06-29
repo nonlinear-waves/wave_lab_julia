@@ -8,6 +8,18 @@ struct Infinity
     Ak
 end
 
+struct ProfileSolution
+    F
+    Flinear
+    n
+    order
+    phase
+    UL
+    UR
+    stats
+    tol
+end
+
 
 # TODO:: Figure out a better name for this struct so that it makes more sense
 struct M
