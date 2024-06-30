@@ -1,4 +1,4 @@
-function profile_flux(p, s, s_old) 
+function profile_flux(p, s, s_old = "None") 
 
     # Solves the profile for the flux formulation. 
     # If s.s_old exists, then this
@@ -25,7 +25,60 @@ function profile_flux(p, s, s_old)
     # s.R_max - maximum allowed interval length on right (defaults to 1000)
     # s.L_max - maximum allowed interval length on left (defaults to 1000)
 
+    # End state tolerance
+    if isnothing(s.tol)
+        s_tol = 1e-4
+    end
 
+    # Maximum value of R allowed
+    if isnothing(s.R_max)
+        s_R_max = 10000
+    end
+
+    # Maximum value of L allowed
+    if isnothing(s.L_max)
+        s_L_max = 10000
+    end
+
+    # Numerical infinity
+    s_I = 1
+    # Profile solved on right half domain
+    s_side = 1
+    # Array for right hand side 
+    s_array = 1:s.n
+    # Array for left hand side
+    s_larray = s.n + 1:(2 * s.n)
+
+    #Bvp solver projections
+    AM = s.Flinear(s.UL, p)
+    proj1, _ = projection1(AM, -1, 0)
+    s_LM = svd(transpose(proj1))
+
+    AP = s.Flinear(s.UR, p)
+    proj2, _ = projection1(AP, 1, 0)
+    s_LP = svd(transpose(proj2))
+
+    s_n_phs = s.n - size(s_LM, 2) - size(s_LP, 2)
+
+    if s_n_phs < 1
+        println("Eigenvalues at negative infinity: ")
+        println(eigvals(AM))
+        println("Eigenvalues at positive infinity")
+        println(eigvals(AP))
+        error("profile_flux.jl does not solve undercompressive profiles")
+
+    end
+
+    # BVP tolerances
+    if isnothing(s.bvp_options)
+        s_bvp_options = Dict(:reltol => 1e-6, :abstol => 1e-8, :Nmax => 20000)
+    end
+
+    # Positive numerical infinity
+
+    # Solve the profile initially
+
+    p, s = profile(p, s, s_old)
 
     return nothing
 

@@ -61,7 +61,7 @@ function MHD()
     #Tolerance at end states
     s_tol = 1e-6
 
-    s = ProfileSolution(s_F, s_Flinear, s_n, s_order, s_phase, s_UL, s_UR, s_stats, s_tol)
+    s = ProfileSolution(s_F, s_Flinear, s_n, s_order, s_phase, s_UL, s_UR, s_stats, s_tol, nothing, nothing)
 
     p, s = profile_flux(p,s)
 

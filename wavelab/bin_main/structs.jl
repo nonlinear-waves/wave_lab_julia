@@ -18,6 +18,8 @@ struct ProfileSolution
     UR
     stats
     tol
+    R_max
+    L_max
 end
 
 
