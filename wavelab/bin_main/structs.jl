@@ -20,6 +20,15 @@ struct ProfileSolution
     tol
     R_max
     L_max
+    I
+    side
+    rarray
+    larray
+    LM
+    LP
+    n_phs
+    bvp_options
+    stride
 end
 
 

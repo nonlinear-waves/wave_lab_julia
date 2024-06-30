@@ -28,16 +28,22 @@ function profile_flux(p, s, s_old = "None")
     # End state tolerance
     if isnothing(s.tol)
         s_tol = 1e-4
+    else
+        s_tol = s.tol
     end
 
     # Maximum value of R allowed
     if isnothing(s.R_max)
         s_R_max = 10000
+    else
+        s_R_max = s.R_max
     end
 
     # Maximum value of L allowed
     if isnothing(s.L_max)
         s_L_max = 10000
+    else
+        s_L_max = s.L_max
     end
 
     # Numerical infinity
@@ -45,7 +51,7 @@ function profile_flux(p, s, s_old = "None")
     # Profile solved on right half domain
     s_side = 1
     # Array for right hand side 
-    s_array = 1:s.n
+    s_rarray = 1:s.n
     # Array for left hand side
     s_larray = s.n + 1:(2 * s.n)
 
@@ -74,12 +80,29 @@ function profile_flux(p, s, s_old = "None")
         s_bvp_options = Dict(:reltol => 1e-6, :abstol => 1e-8, :Nmax => 20000)
     end
 
+
+    new_s = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s_tol, s_R_max, s_L_max, s_I, s_side, s_rarray, s_larray, s_LM, s_LP, s_n_phs, s_bvp_options, nothing)
+
     # Positive numerical infinity
 
     # Solve the profile initially
 
     p, s = profile(p, s, s_old)
 
+    # Take out extra mesh points
+
+    # stride = how many points to take out of solution to
+    # minimize points in final solution
+    s_stride = 3
+
     return nothing
+
+end
+
+
+
+function profile(p, s, s_old)
+
+    # Provided initial guess
 
 end
