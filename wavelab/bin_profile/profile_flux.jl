@@ -60,11 +60,23 @@ function profile_flux(p, s, s_old = nothing)
     proj1, _ = projection1(AM, -1, 0)
     s_LM = svd(transpose(proj1)).U
 
+    if size(s_LM,1) == 1 && size(s_LM, 2) == 1
+        n_LM = 0
+    else
+        n_LM = size(s_LM, 2)
+    end
+
     AP = s.Flinear(s.UR, p)
     proj2, _ = projection1(AP, 1, 0)
     s_LP = svd(transpose(proj2)).U
 
-    s_n_phs = s.n - size(s_LM, 2) - size(s_LP, 2)
+    if size(s_LP,1) == 1 && size(s_LP, 2) == 1
+        n_LP = 0
+    else
+        n_LP = size(s_LP, 2)
+    end
+
+    s_n_phs = s.n - n_LM - n_LP
 
     if s_n_phs < 1
         println("Eigenvalues at negative infinity: ")
@@ -81,7 +93,7 @@ function profile_flux(p, s, s_old = nothing)
     end
 
 
-    new_s = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s_tol, s_R_max, s_L_max, s_I, s_side, s_rarray, s_larray, s_LM, s_LP, s_n_phs, s_bvp_options, nothing)
+    new_s = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s_tol, s_R_max, s_L_max, s_I, nothing, nothing, s_side, s_rarray, s_larray, s_LM, s_LP, s_n_phs, s_bvp_options, nothing, nothing)
 
     # Positive numerical infinity
 
@@ -130,7 +142,7 @@ function profile(p, s, s_old)
         count = 1
         for j = 1:length(s_old.sol.t)
             if stride % (j-1) == 0
-                xdom(count) = s_old.sol.t[j]
+                xdom[count] = s_old.sol.t[j]
                 count += 1
             end
         end
@@ -148,6 +160,8 @@ function profile(p, s, s_old)
 
         if isnothing(s.R)
             s_R = 5
+        else
+            s_R = s.R
         end
 
         s_L = -s_R
@@ -161,6 +175,51 @@ function profile(p, s, s_old)
     # Convergence to endstates tolerance
 
     err = s.tol + 1
+    while err > s.tol
+        pre_bc(x,y) = bc(x, y, s, p)
+        pre_ode = double_F(x, y, s, p)
+
+        bvp = BVPProblem(pre_ode, pre_bc, pre_guess)
         
+        s_sol = solve(bvp, MIRK5(); s.bvp_options...)
+
+
+        err1 = max(abs(s_sol.u[s.rarray, end] - s.UR))
+        err2 = max(abs(s.sol.u[s.larray, end] - s.UL))
+        err = maximum(err1, err2)
+
+        if s.stats == "on"
+            println("Profile Boundary error", err)
+        end
+
+
+        if err > s.tol
+            s_R = 1.1 * s.R
+            s_L = -s.R 
+        end
+
+        if err2 > s.tol
+            s_L = 1.1 * s.L
+            s_R = -s.L
+        end
+
+        if abs(s_L) > s.L_max
+            error("Could not meet specified tolerance in profile solver without exceeding the maximum allowed value of negative infinity")
+        end
+
+        if abs(s_R) > s.R_max
+            error("Could not meet specified tolerance in profile solver without exceeding the maximum allowed value of positive infinity")
+        end
+
+        if err > s.tol
+            pre_guess(x) = continuation_guess(x, s_old, s)
+            x_dom = s_old.sol.u
+        end
+
+        # TODO:: Figure out the correct place to update s
+
+    end
+        
+    return p, s
 
 end

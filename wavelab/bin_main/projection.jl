@@ -15,15 +15,20 @@ function projection1(matrix,posneg,eps)
 
 
     if size(R,1) == 1 && size(R,2) == 1
-        R = R[0]
+        R = R[1]
+        isScalar = true
     end
-    
+
     # R[:,2] = -R[:,2]
 
 
     L = inv(R)
 
-    P = zeros(size(R))
+    if isScalar
+        P = 0
+    else
+        P = zeros(size(R))
+    end
     
     
     if posneg == 1
@@ -38,7 +43,11 @@ function projection1(matrix,posneg,eps)
         P = P + R[:,j] .* transpose(L[j,:])
     end
     
-    Q = P*R[:,index]
+    if isScalar
+        Q = P*R
+    else
+        Q = P*R[:,index]
+    end
 
     return P, Q
 

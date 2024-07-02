@@ -21,6 +21,8 @@ struct ProfileSolution
     R_max
     L_max
     I
+    R
+    L
     side
     rarray
     larray
@@ -29,6 +31,7 @@ struct ProfileSolution
     n_phs
     bvp_options
     stride
+    sol
 end
 
 
