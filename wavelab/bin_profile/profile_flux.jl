@@ -1,4 +1,4 @@
-function profile_flux(p, s, s_old = "None") 
+function profile_flux(p, s, s_old = nothing) 
 
     # Solves the profile for the flux formulation. 
     # If s.s_old exists, then this
@@ -58,11 +58,11 @@ function profile_flux(p, s, s_old = "None")
     #Bvp solver projections
     AM = s.Flinear(s.UL, p)
     proj1, _ = projection1(AM, -1, 0)
-    s_LM = svd(transpose(proj1))
+    s_LM = svd(transpose(proj1)).U
 
     AP = s.Flinear(s.UR, p)
     proj2, _ = projection1(AP, 1, 0)
-    s_LP = svd(transpose(proj2))
+    s_LP = svd(transpose(proj2)).U
 
     s_n_phs = s.n - size(s_LM, 2) - size(s_LP, 2)
 
@@ -87,7 +87,7 @@ function profile_flux(p, s, s_old = "None")
 
     # Solve the profile initially
 
-    p, s = profile(p, s, s_old)
+    p, s = profile(p, new_s, s_old)
 
     # Take out extra mesh points
 
@@ -104,5 +104,63 @@ end
 function profile(p, s, s_old)
 
     # Provided initial guess
+
+    if !isnothing(s_old)
+        if !isnothing(s_old.solver)
+            if (s_old.solver != "bvp4c" || s_old.solver != "bvp5c")
+                solver_type = "bvp"
+            else 
+                solver_type = "ode"
+                s_stride = 3
+            end
+
+            if solver_tpe == "ode"
+                pre_guess(x) = ode_to_bvp_guess(x, s_old, s)
+            elseif solver_type == "bvp"
+                pre_guess(x) = continuation_guess(x, s_old, s)
+            else
+                error("Undefined solver type")
+            end
+        
+        else 
+            pre_guess(x) = continuation_guess(x, s_old, s)
+        end
+
+        stride = s_old.stride
+        count = 1
+        for j = 1:length(s_old.sol.t)
+            if stride % (j-1) == 0
+                xdom(count) = s_old.sol.t[j]
+                count += 1
+            end
+        end
+        
+        if (length(s_old.sol.u) - 1) % stride != 0
+            x_dom[count] = s_old.sol.u[end]
+        end
+
+        s_I = s_old.I
+        s_L = s_old.L
+        s_R = s_old.r
+
+    else
+        s_I = 1
+
+        if isnothing(s.R)
+            s_R = 5
+        end
+
+        s_L = -s_R
+
+        pre_guess(x) = guess(x,s)
+        x_dom = LinRange(0,1,30)
+
+    end
+
+
+    # Convergence to endstates tolerance
+
+    err = s.tol + 1
+        
 
 end

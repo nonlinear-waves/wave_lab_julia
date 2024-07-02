@@ -13,6 +13,11 @@ function projection1(matrix,posneg,eps)
     D = eigvals(matrix)
     R = eigvecs(matrix)
 
+
+    if size(R,1) == 1 && size(R,2) == 1
+        R = R[0]
+    end
+    
     # R[:,2] = -R[:,2]
 
 
