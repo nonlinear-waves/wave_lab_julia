@@ -43,25 +43,64 @@ function emcset(s, shock_type, eLR, Evan_type = "default", func = nothing, compo
 
     # TODO:: Figure out how to make the func and compound_func default to A and Ak where those are files that are in the current directory or path like in MATLAB
 
-    if cmp(shock_type, "front") == 0
+    if shock_type == "front"
         e, m, c = initialize_front(s, eL, eR, Evan_type, func, compound_func)
-        new_s = Infinity(s.I, s.R, s.L, func, compound_func)
-    
+
+    elseif shock_type == "periodic"
+
+    elseif shock_type == "lopatinski"
+        e, m, c = initialize_lopatinski(func, s, shock_type)
+
     else
         error("User must specify which type of traveling wave is being studied")
-
-    
     end
+
+    new_s = Infinity(s.I, s.R, s.L, func, compound_func)
 
     return new_s, e, m, c
 end
 
 
+function initialize_lopatinski(func, s, shock_type)
+    e_evans = shock_type
+
+    c_LA = func
+    c_RA = func
+
+    c_stats = "off"
+    c_refine = "off"
+    c_tol = 0.2
+    c_ksteps = 2^5
+    c_lambda_steps = 0
+    c_basisL = analytic_basis
+    c_basisR = analytic_basis
+    c_evans = evans
+
+    c_epsl = 0
+    c_epsr = 0
+    c_Lproj = projection2
+    c_Rproj = projection2
+
+
+    # Dependent structure variables
+    e_Li = [s.L 0]
+    e_Ri = [s.R 0]
+    c_L = s.L
+    c_R = s.R
+
+
+    e = E(e_evans, nothing, nothing, nothing, nothing, nothing, nothing, e_Li, e_Ri)
+    m = M(nothing, nothing, nothing, nothing, nothing)
+    c = C(c_LA, c_RA, c_stats, c_refine, c_tol, c_ksteps, c_lambda_steps, c_basisL, c_basisR, c_evans, c_epsl, c_epsr, c_Lproj, c_Rproj, c_L, c_R, nothing, nothing)
+
+    return e, m, c
+end
+
 function initialize_front(s, kL, kR, Evan_type, func, compound_func)
 
     m_n = kL + kR
 
-    if cmp(Evan_type, "default") == 0
+    if Evan_type == "default"
 
         if kL > m_n / 2
             e_evans = "adj_reg_polar"
@@ -78,7 +117,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_evans = Evan_type
     end
 
-    if cmp(e_evans, "reg_adj_polar") == 0
+    if e_evans == "reg_adj_polar"
         c_LA = func
         e_LA = c_LA
         c_RA = Aadj
@@ -90,7 +129,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 0
         e_NR = 0
 
-    elseif cmp(e_evans, "reg_reg_polar") == 0
+    elseif e_evans == "reg_reg_polar"
         c_LA = func
         e_LA = c_LA
         c_RA = func
@@ -102,7 +141,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 0
         e_NR = 0
 
-    elseif cmp(e_evans, "adj_reg_polar") == 0
+    elseif e_evans == "adj_reg_polar"
         c_LA = Aadj
         e_LA = Aadj
         c_RA = func
@@ -114,7 +153,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 0
         e_NR = 0
 
-    elseif cmp(e_evans, "reg_adj_compound") == 0
+    elseif e_evans == "reg_adj_compound"
         c_LA = func
         e_LA = compound_func
         c_RA = Aadj
@@ -126,7 +165,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 0
         e_NR = 0
 
-    elseif cmp(e_evans, "adj_reg_compound") == 0
+    elseif e_evans == "adj_reg_compound"
         c_LA = Aadj
         e_LA = Akadj
         c_RA = func
@@ -138,7 +177,7 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
         e_NL = 0
         e_NR = 0
 
-    elseif cmp(e_evans, "reg_reg_cheby") == 0
+    elseif e_evans == "reg_reg_cheby"
         c_LA = func
         e_LA = c_LA
         c_RA = func
@@ -195,4 +234,38 @@ function initialize_front(s, kL, kR, Evan_type, func, compound_func)
 
 end
 
-    
+
+function initialize_periodic(s, eL, eR, Evan_type)
+
+    # Find center of the wave
+
+    xdom = LinRange(s.sol.t[1], s.sol.t[end], 1000)
+    yran = zeros(length(xdom), 1)
+    for j = axes(xdom, 1)
+        temp = s.sol(xdom[j])
+        yran[j] = temp[1,1]
+    end
+
+    maxval = yran[1]
+    xind = 1
+
+    for j = axes(yran, 1)
+        if yran[j] > maxval
+            maxval = yran[j]
+            xind = j
+        end
+    end
+    s_center = xdom[xind]
+
+    # Set default structure values
+
+    n = eL + eR
+
+    c_ksteps = 2^18
+    c_lambda_steps = 0
+    c_refine = "off"
+    c_tol = 0.2
+    c_evans = evans
+
+    e_A = Aper
+end

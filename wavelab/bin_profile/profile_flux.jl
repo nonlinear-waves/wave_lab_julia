@@ -1,3 +1,7 @@
+using DifferentialEquations
+
+include("../bin_main/double_F.jl")
+
 function profile_flux(p, s, s_old = nothing) 
 
     # Solves the profile for the flux formulation. 
@@ -127,15 +131,15 @@ function profile(p, s, s_old)
             end
 
             if solver_tpe == "ode"
-                pre_guess(x) = ode_to_bvp_guess(x, s_old, s)
+                pre_guess = ode_to_bvp_guess
             elseif solver_type == "bvp"
-                pre_guess(x) = continuation_guess(x, s_old, s)
+                pre_guess = continuation_guess
             else
                 error("Undefined solver type")
             end
         
         else 
-            pre_guess(x) = continuation_guess(x, s_old, s)
+            pre_guess = continuation_guess
         end
 
         stride = s_old.stride
@@ -166,7 +170,7 @@ function profile(p, s, s_old)
 
         s_L = -s_R
 
-        pre_guess(x) = guess(x,s)
+        pre_guess = guess
         x_dom = LinRange(0,1,30)
 
     end
@@ -176,10 +180,10 @@ function profile(p, s, s_old)
 
     err = s.tol + 1
     while err > s.tol
-        pre_bc(x,y) = bc(x, y, s, p)
-        pre_ode = double_F(x, y, s, p)
+        pre_bc(x,y) = bc(x, y, s)
+        pre_ode(x,y) = double_F(x, y, s, p)
 
-        bvp = BVPProblem(pre_ode, pre_bc, pre_guess)
+        bvp = BVProblem(pre_ode, pre_bc, pre_guess)
         
         s_sol = solve(bvp, MIRK5(); s.bvp_options...)
 
