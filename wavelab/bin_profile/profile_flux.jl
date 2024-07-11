@@ -66,6 +66,7 @@ function profile_flux(p, s, s_old = nothing)
 
     if size(s_LM,1) == 1 && size(s_LM, 2) == 1
         n_LM = 0
+        s_LM = []
     else
         n_LM = size(s_LM, 2)
     end
@@ -76,6 +77,7 @@ function profile_flux(p, s, s_old = nothing)
 
     if size(s_LP,1) == 1 && size(s_LP, 2) == 1
         n_LP = 0
+        s_LP = []
     else
         n_LP = size(s_LP, 2)
     end
@@ -194,22 +196,34 @@ function profile(p, s, s_old)
         p_bvp = BVP_params(s, p)
 
 
-
+        println("Hello")
         bvp = BVProblem(pre_ode, pre_bc, pre_guess(x_dom), (x_dom[1], x_dom[end]), p_bvp)
         
-        s_sol = solve(bvp, MIRK5(); s.bvp_options..., dt = 0.01)
+        s_sol = solve(bvp, MIRK5(); s.bvp_options..., dt = 0.00001)
 
+        println(s_sol.u[s.rarray, end])
+        println(typeof(s_sol.u[s.rarray, end]))
+        println(s.UR)
+        println(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR)
 
-        err1 = max(abs(s_sol.u[s.rarray, end] - s.UR))
-        err2 = max(abs(s.sol.u[s.larray, end] - s.UL))
-        err = maximum(err1, err2)
+        println(abs.(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR))
+
+        err1 = maximum(abs.(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR))
+        err2 = maximum(abs.(reduce(vcat,s_sol.u[s.larray, end]) .- s.UL))
+        err = max(err1, err2)
+
+        println(err1)
+        println(err2)
 
         if s.stats == "on"
-            println("Profile Boundary error", err)
+            println("Profile Boundary error: ", err)
         end
 
-
         if err > s.tol
+            s_old = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s.tol, s.R_max, s.L_max, s.I, s.R, s.L, s.side, s.rarray, s.larray, s.LM, s.LP, s.n_phs, s.bvp_options, s.stride, s_sol)
+        end
+        
+        if err1 > s.tol
             s_R = 1.1 * s.R
             s_L = -s.R 
         end
@@ -248,7 +262,7 @@ function guess(x, s)
     c = 0.5 * (s.UL - s.UR)
     out = [a .- c * tanh.((s.R / s.I) * x) a .- c*tanh.((s.L/s.I) * x)]
     out = [out[i,:] for i in axes(out,1)]
-    
+
     return out
 
 end
@@ -267,10 +281,16 @@ function bc(u, p, t)
         index = s.order[1:s.n_phs]
     end
 
-    out = [u[1][s.rarray] .- u[1][s.larray]
-           transpose(s.LM) * u[end][s.larray] .- s.UL
-           transpose(s.LP) * u[end][s.rarray] .- s.UR
-           u[1][index] - s.phase[index]]
+
+    if size(s.LM) == (0,) && size(s.LP) == (0,)
+        out = [u[1][s.rarray] .- u[1][s.larray];
+               u[1][index] - s.phase[index]]
+    else
+        out = [u[1][s.rarray] .- u[1][s.larray];
+            transpose(s.LM) * u[end][s.larray] .- s.UL;
+            transpose(s.LP) * u[end][s.rarray] .- s.UR;
+            u[1][index] - s.phase[index]]
+    end
 
 
     return out

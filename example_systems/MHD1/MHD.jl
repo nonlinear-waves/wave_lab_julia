@@ -47,7 +47,7 @@ function MHD()
     # Profile Solution
 
 
-    s_F(x, y, s, p) = (2 * p.mu + p.eta) ^ (-1) * y * (y .- 1 + p.a * (y ^ (-p.gamma) .- 1))
+    s_F(x, y, s, p) = 2 * p.mu .+ p.eta ^ (-1) * y * (y .- 1 .+ p.a * (max.(0,y) ^ (-p.gamma) .- 1))
     s_Flinear(y, p) = (2 * p.mu + p.eta) ^ (-1) * (y - 1 + p.a * (y ^ (-p.gamma) - 1)) + (2 * p.mu + p.eta) ^ (-1) * y * (1 - p.a * p.gamma * y ^ (-p.gamma - 1))
     # number of profile quations to integrate
     s_n = 1

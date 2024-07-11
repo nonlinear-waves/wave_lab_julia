@@ -10,8 +10,8 @@ function double_F(y, p, x, args...)
     # Think ... could be a solution or just defining 
     s = p.s
     p = p.p
-    out = [(s.R / s.I) * s.F((s.R/s.I) * x, y[s.rarray, :] , s, p, args...) (s.L/s.I) * s.F((s.L/s.I) * x, y[s.larray, :], s, p, args...)]
 
-    println(out)
+    out = [(s.R / s.I) * s.F((s.R/s.I) * x, y[s.rarray, :] , s, p, args...); (s.L/s.I) * s.F((s.L/s.I) * x, y[s.larray, :], s, p, args...)]
+
     return out
 end
