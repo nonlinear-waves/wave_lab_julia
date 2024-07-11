@@ -90,3 +90,8 @@ struct ODE_params
     k
     mu
 end
+
+struct BVP_params
+    s
+    p
+end

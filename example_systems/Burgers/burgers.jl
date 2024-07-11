@@ -41,6 +41,7 @@ function burgers()
 
     #Compute the Evans function
     halfw, _ = contour(c, s, p, m, e, preimage)
+    halfw = halfw ./ halfw[1]
     w = [halfw; reverse(conj(halfw))]
     wind = winding_number(w)
 

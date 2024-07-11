@@ -33,8 +33,8 @@ function boussinseq()
 
     # s, e, m, c = emcset(s, "front", [2,2], "default", A)
     # s, e, m, c = emcset(s, "front", [2,2], "reg_adj_polar", A)
-    # s, e, m, c = emcset(s, "front", [2,2], "adj_reg_polar", A)
-    s, e, m, c = emcset(s, "front", [2,2], "reg_reg_polar", A)
+    s, e, m, c = emcset(s, "front", [2,2], "adj_reg_polar", A)
+    # s, e, m, c = emcset(s, "front", [2,2], "reg_reg_polar", A)
     # s, e, m, c = emcset(s, "front", [2,2], "reg_adj_compound", A, Ak)
     # s, e, m, c = emcset(s, "front", [2,2], "adj_reg_compound", A , Ak)
 
@@ -48,6 +48,7 @@ function boussinseq()
     # Compute Evans function
 
     halfw, _ = contour(c, s, p, m, e, preimage)
+    halfw = halfw ./ halfw[1]
     w = [halfw[1 : end-1]; reverse(conj(halfw))]
 
     wnd = winding_number(w)

@@ -93,7 +93,7 @@ function profile_flux(p, s, s_old = nothing)
 
     # BVP tolerances
     if isnothing(s.bvp_options)
-        s_bvp_options = Dict(:reltol => 1e-6, :abstol => 1e-8, :Nmax => 20000)
+        s_bvp_options = Dict(:reltol => 1e-6, :abstol => 1e-8)
     end
 
 
@@ -125,21 +125,25 @@ function profile(p, s, s_old)
         if !isnothing(s_old.solver)
             if (s_old.solver != "bvp4c" || s_old.solver != "bvp5c")
                 solver_type = "bvp"
+                s_stride = s.stride
             else 
                 solver_type = "ode"
                 s_stride = 3
             end
 
             if solver_tpe == "ode"
-                pre_guess = ode_to_bvp_guess
+                pre_guess1(x) = ode_to_bvp_guess(x, s_old, s)
+                pre_guess = pre_guess1
             elseif solver_type == "bvp"
-                pre_guess = continuation_guess
+                pre_guess2(x) = continuation_guess(x, s_old, s)
+                pre_guess = pre_guess2
             else
                 error("Undefined solver type")
             end
         
         else 
-            pre_guess = continuation_guess
+            pre_guess3(x) = continuation_guess(x, s_old, s)
+            pre_guess = pre_guess3
         end
 
         stride = s_old.stride
@@ -160,6 +164,7 @@ function profile(p, s, s_old)
         s_R = s_old.r
 
     else
+        s_stride = s.stride
         s_I = 1
 
         if isnothing(s.R)
@@ -170,22 +175,29 @@ function profile(p, s, s_old)
 
         s_L = -s_R
 
-        pre_guess = guess
+        pre_guess4(x) = guess(x,s)
+        pre_guess = pre_guess4
         x_dom = LinRange(0,1,30)
 
     end
+
+    s = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s.tol, s.R_max, s.L_max, s_I, s_R, s_L, s.side, s.rarray, s.larray, s.LM, s.LP, s.n_phs, s.bvp_options, s_stride, s.sol)
 
 
     # Convergence to endstates tolerance
 
     err = s.tol + 1
     while err > s.tol
-        pre_bc(x,y) = bc(x, y, s)
-        pre_ode(x,y) = double_F(x, y, s, p)
+        pre_bc(y, s, x) = bc(y, s, x)
+        pre_ode(y, p_bvp, x) = double_F(y, p_bvp, x)
 
-        bvp = BVProblem(pre_ode, pre_bc, pre_guess)
+        p_bvp = BVP_params(s, p)
+
+
+
+        bvp = BVProblem(pre_ode, pre_bc, pre_guess(x_dom), (x_dom[1], x_dom[end]), p_bvp)
         
-        s_sol = solve(bvp, MIRK5(); s.bvp_options...)
+        s_sol = solve(bvp, MIRK5(); s.bvp_options..., dt = 0.01)
 
 
         err1 = max(abs(s_sol.u[s.rarray, end] - s.UR))
@@ -225,5 +237,42 @@ function profile(p, s, s_old)
     end
         
     return p, s
+
+end
+
+
+
+function guess(x, s) 
+    # Guess using tanh solution
+    a = 0.5 * (s.UL + s.UR)
+    c = 0.5 * (s.UL - s.UR)
+    out = [a .- c * tanh.((s.R / s.I) * x) a .- c*tanh.((s.L/s.I) * x)]
+    out = [out[i,:] for i in axes(out,1)]
+    
+    return out
+
+end
+
+
+function bc(u, p, t)
+    # Boundary conditions. We split the problem in half and reflect onto the right side
+
+    s = p.s
+
+    #println(isa(s.order))
+
+    if isa(s.order, Int64)
+        index = s.order
+    else
+        index = s.order[1:s.n_phs]
+    end
+
+    out = [u[1][s.rarray] .- u[1][s.larray]
+           transpose(s.LM) * u[end][s.larray] .- s.UL
+           transpose(s.LP) * u[end][s.rarray] .- s.UR
+           u[1][index] - s.phase[index]]
+
+
+    return out
 
 end
