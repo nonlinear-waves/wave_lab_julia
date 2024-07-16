@@ -1,6 +1,7 @@
 using DifferentialEquations
 
 include("../bin_main/double_F.jl")
+include("continuation_guess.jl")
 
 function profile_flux(p, s, s_old = nothing) 
 
@@ -197,23 +198,16 @@ function profile(p, s, s_old)
 
 
         println("Hello")
+        println(pre_guess(x_dom))
         bvp = BVProblem(pre_ode, pre_bc, pre_guess(x_dom), (x_dom[1], x_dom[end]), p_bvp)
         
         s_sol = solve(bvp, MIRK5(); s.bvp_options..., dt = 0.00001)
 
-        println(s_sol.u[s.rarray, end])
-        println(typeof(s_sol.u[s.rarray, end]))
-        println(s.UR)
-        println(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR)
-
-        println(abs.(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR))
+        println(s_sol)
 
         err1 = maximum(abs.(reduce(vcat,s_sol.u[s.rarray, end]) .- s.UR))
         err2 = maximum(abs.(reduce(vcat,s_sol.u[s.larray, end]) .- s.UL))
         err = max(err1, err2)
-
-        println(err1)
-        println(err2)
 
         if s.stats == "on"
             println("Profile Boundary error: ", err)
@@ -222,7 +216,7 @@ function profile(p, s, s_old)
         if err > s.tol
             s_old = ProfileSolution(s.F, s.Flinear, s.n, s.order, s.phase, s.UL, s.UR, s.stats, s.tol, s.R_max, s.L_max, s.I, s.R, s.L, s.side, s.rarray, s.larray, s.LM, s.LP, s.n_phs, s.bvp_options, s.stride, s_sol)
         end
-        
+
         if err1 > s.tol
             s_R = 1.1 * s.R
             s_L = -s.R 
@@ -243,7 +237,7 @@ function profile(p, s, s_old)
 
         if err > s.tol
             pre_guess(x) = continuation_guess(x, s_old, s)
-            x_dom = s_old.sol.u
+            x_dom = s_old.sol.t
         end
 
         # TODO:: Figure out the correct place to update s
@@ -256,7 +250,7 @@ end
 
 
 
-function guess(x, s) 
+function guess(x, s)
     # Guess using tanh solution
     a = 0.5 * (s.UL + s.UR)
     c = 0.5 * (s.UL - s.UR)

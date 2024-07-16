@@ -8,10 +8,7 @@ function double_F(y, p, x, args...)
 
     # TODO:: Not quite sure what to do about the variable number of arguments
     # Think ... could be a solution or just defining 
-    s = p.s
-    p = p.p
-
-    out = [(s.R / s.I) * s.F((s.R/s.I) * x, y[s.rarray, :] , s, p, args...); (s.L/s.I) * s.F((s.L/s.I) * x, y[s.larray, :], s, p, args...)]
-
+    
+    out = [(p.s.R / p.s.I) * p.s.F((p.s.R/p.s.I) * x, y[p.s.rarray, :] , p.s, p.p, args...); (p.s.L/p.s.I) * p.s.F((p.s.L/p.s.I) * x, y[p.s.larray, :], p.s, p.p, args...)]
     return out
 end
