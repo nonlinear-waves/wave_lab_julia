@@ -14,7 +14,7 @@ function drury(y, p, t)
     Omega = reshape(y[1:p.k*p.n,1], p.n, p.k)
 
     # Evaluate A(x, lambda)
-    A_temp = A(t, p.lambda, p.s, p.p)
+    A_temp = p.A(t, p.lambda, p.s, p.p)
 
     # Compute Omega' and rho'
     return [reshape((I - Omega * Omega') * A_temp * Omega, p.n * p.k, 1);  tr(Omega' * A_temp * Omega) - p.mu]
